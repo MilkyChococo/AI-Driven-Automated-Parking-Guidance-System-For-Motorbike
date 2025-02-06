@@ -1,1 +1,440 @@
+\documentclass{article}
 
+\usepackage{multicol}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[vietnamese]{babel}
+\newcommand{\tab}{\hspace*{2em}}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{} 
+\renewcommand{\headrulewidth}{0.6pt} 
+\renewcommand{\footrulewidth}{0.6pt} 
+\lhead{Group 8}
+\rhead{University Of Information Technology}
+\lfoot{AI-Driven Automated Parking Guidance System For Motorbike}
+\rfoot{\thepage}
+\title{\textbf{Group 8 - AI-Driven Automated Parking Guidance System For\\ Motorbike}}
+\author{
+    Đào Mạnh Dũng\textsuperscript{1}, Nguyễn Minh Phú\textsuperscript{2},\\ 
+    Trương Thiên Phú\textsuperscript{3}, Tăng Hoàng Phúc\textsuperscript{4}, Mai Xuân Tuấn\textsuperscript{5}\\
+    23520325\textsuperscript{1},23521184\textsuperscript{2},2351190\textsuperscript{3},23521219\textsuperscript{4},23521714\textsuperscript{5}
+}
+\date{}
+\begin{document}
+
+\maketitle
+\rule{\linewidth}{0.6pt}
+\thispagestyle{fancy}
+\section{Introduction}
+Currently, the large number of university students and the frequent movement in and out of the parking lot have caused difficulties in coordinating available spaces for security personnel and students to find parking spots. Therefore, we have proposed a solution to this issue: \textit{AI-Driven Automated Parking Guidance System for\\ Motorbike Lots}
+
+This method has its advantages and disadvantages. With the support of machine learning technology, universities can minimize labor, reduce traffic congestion caused by confusion, and alleviate overcrowding during peak hours. Students can also save time searching for parking spots in the parking lot. Our top priority is to design a system that is convenient and simple and uses algorithms that can be applied to most parking lots within the National University Group for students.
+
+\section{AI-Powered Parking Guidance for Motorbike}
+    \subsection{Problem Statement}
+    \subsubsection{Constraint}
+    \begin{itemize}[label=-]
+      \item The parking spaces in the parking lot must have fixed dimensions, with a length of at least 1.6 meters and a width of at least 0.8 meters.
+      \item Pathway: The width must be at least 1.6 meters, and there must be a way to access every parking space. At any intersection, the maximum number of turns allowed is four.
+      \item If there are two rows of parking spaces on either side of the pathway, the parking spaces on one side must be arranged parallel to the spaces on the opposite side to avoid any misalignment.
+      \item The entry and exit gates must be separate. At the entry gate, a camera will be positioned in such a way that it can capture the vehicle license plates (installed above along the entryway, facing directly towards the plates to ensure full visibility, no obstructions, and adequate lighting). The system will guide up to five vehicles at a time (each vehicle will follow a designated path marked by a unique color assigned to it).
+      \item Only motorbikes with license plates will be guided.
+      \item Camera Requirements:
+        \begin{itemize}[label=·]
+          \item The cameras must meet a minimum of 24 FPS and 1080p resolution.
+          \item Ensure the camera images are well-lit; if any area is dark, additional lighting should be installed.
+          \item For parking spaces, place cameras directly opposite the parking spaces, with a fixed view aimed at the parking spots. The camera height must be at least 7 meters, and the angle between the camera's line of sight and the vertical axis should be no greater than 40 degrees. Each camera should cover multiple spaces that are visible. If a parking spot is located in a position where other vehicles or objects block the camera's view, that camera should not be responsible for monitoring those spaces.
+          \item Ensure the number of cameras is sufficient to cover all parking spaces assigned to each camera.
+          \item For pathways, place cameras with a view aligned along the path, at a height of 7 meters or higher, with the angle between the camera's line of sight and the vertical axis being between 45 and 70 degrees. Each section of the pathway should have two cameras facing each other (to ensure both directions of traffic are visible, including license plates). Each pair of cameras will cover a maximum of 20 meters of the path. Ensure that the cameras are positioned so that the entire length of the path is covered without being obstructed by any objects.
+        \end{itemize}
+      \item At each pathway, two electronic signs will be installed: one at the beginning and one at the end of the path, so that vehicles traveling in both directions can see the signs. Additionally, each parking space will be equipped with a signal light (with five colors, each color used to guide one specific vehicle) to help vehicles easily identify their assigned parking spot.
+     \end{itemize}
+    \subsubsection{Input:}
+    \begin{itemize}[label=-]
+      \item The parking lot diagram includes the locations of the signage, camera positions, pathways, parking spaces, entry and exit gates, and all the size specifications for the various areas of the parking lot.
+      \item The real-time video feed from all the cameras.
+    \end{itemize}
+    \subsubsection{Output:}
+    \begin{itemize}[label=-]
+      \item Display the guidance on each electronic sign and the signal lights at the assigned parking spots.
+     \end{itemmize}
+    \subsection{Decomposition}
+        \begin{figure}[h!]
+            \centering
+            \includegraphics[width=1\linewidth]{Decomposition.png}
+            \caption{The hierarchical diagram based on the proposed idea}
+        \end{figure}
+        \subsubsection{Chú thích}
+        \begin{enumerate}
+          \item Real-time video feed from the cameras
+          \item Update the status of parking spaces
+          \item Parking lot diagram
+          \item Current location of the vehicle
+          \item Nearest available parking space
+          \item Route to the assigned parking space
+          \item Update the guidance on each electronic sign and the signal lights at the assigned parking spot
+          \item License plate of the vehicle entering the gate
+          \item Boolean value indicating whether the assigned parking space is occupied
+        \end{enumerate}
+    \subsubsection{Mô tả Decomposition Tree}
+
+    \paragraph{Smart Parking}
+    \begin{itemize}[label=-]
+      \item This is the overall system responsible for managing and operating the smart parking lot. It receives input data from sensors and cameras, then processes it to provide parking guidance.
+    \end{itemize}
+    \paragraph{Detecting the status of available parking spaces.}
+    \begin{itemize}[label=-]
+      \item Analyze images to determine the status of each parking space (vacant or occupied).
+    \end{itemize}
+    \paragraph{License Plate Recognition}
+    \begin{itemize}[label=-]
+        \item Use real-time video to recognize the license plate of incoming vehicles.
+    \end{itemize}
+    \paragraph{Finding the Shortest Path to an Empty Slot}
+    \begin{itemize}[label=-]
+        \item Utilize the license plate of the incoming vehicle, the parking lot layout, and the vehicle's current position to compute the optimal route.
+        \item Output includes the destination slot and the path to it.
+    \end{itemize}
+
+    \paragraph{Determining Instructions on Each Electronic Board}
+    \begin{itemize}[label=-]
+        \item Receive information about the destination slot and the route.
+        \item Update instructions on each electronic board and the signal light at the destination slot.
+    \end{itemize}
+
+    \paragraph{Checking If the Vehicle Can Reach the Assigned Slot}
+    \begin{itemize}[label=-]
+        \item Verify if the vehicle is following the assigned route or if the destination slot is occupied by another vehicle.
+        \item If necessary, recalculate the route and assign a new slot.
+    \end{itemize}
+
+    \paragraph{Determining the Current Position of the Vehicle}
+    \begin{itemize}[label=-]
+        \item Input includes the parking lot layout and real-time video.
+        \item The system determines the vehicle's current position.
+    \end{itemize}
+
+    \paragraph{Checking for Incorrect Routes or Occupied Destination Slots}
+    \begin{itemize}[label=-]
+        \item Use the vehicle's license plate information and parking slot status to check for occupancy.
+        \item Use the vehicle's current position and assigned route to determine if it is following the instructions.
+    \end{itemize}
+
+    \paragraph{Updating the New Route}
+    \begin{itemize}[label=-]
+        \item The system recalculates the path to an alternative empty slot.
+    \end{itemize}
+    \subsection{Evaluation}
+    To evaluate the efficiency of the intelligent motorcycle parking system, we compare two cases:
+    \begin{itemize}
+    \item Guided parking with automated instructions.
+    \item Unguided parking (drivers search for slots themselves).
+    \end{itemize}
+
+Time measurement starts from card scanning ($t_{\text{start}}$) until the vehicle reaches a parking slot ($t_{\text{park}}$).
+
+    \subsubsection{Calculation Formulas}
+
+\[
+T_\text{new} = \frac{1}{n}\sum_{i=1}^{n} \left( t_{\text{park}_i} - t_{\text{start}_i} \right) \, (\text{s})
+\]
+
+\[
+\Delta{H} = \frac{T_\text{old} - T_\text{new}}{T_\text{old}} \cdot 100\, (\%)
+\]
+
+$T_\text{new}$ and $T_\text{old}$ are calculated similarly, but $T_\text{new}$ applies automated guidance, while $T_\text{old}$ does not.
+
+\textbf{Symbols:}
+\begin{itemize}[label=-]
+    \item $n$: Number of vehicles entering the parking lot.
+    \item $t_{\text{park}_i}$: Time when vehicle $i$ parks in a slot.
+    \item $t_{\text{start}_i}$: Time from card scanning at moment $i$.
+    \item $T_{\text{new}}$: Average parking time with automated guidance.
+    \item $T_{\text{old}}$: Average parking time without automated guidance.
+    \item $t_{\text{screen}_i}$: Display time of instructions on the first screen for different vehicles.
+\end{itemize}
+
+\subsubsection{Objective:} \[\Delta{H} > 20\ (\%)\]
+\begin{itemize}
+    \item Demonstrates improved efficiency with the new system.
+\end{itemize}
+
+\subsubsection{Detailed Evaluation}
+\begin{enumerate}
+    \item \textbf{System Latency}
+    \begin{itemize}
+        \item The formula considers only the first screen, as all screens have the same response time.
+    \end{itemize}
+
+\[
+T_\text{delay} = \sum_{i=1}^{n} \left( t_\text{screen}_i - t_\text{start}_i \right) \, (\text{s})
+\]
+
+    \textbf{Symbols:}
+    \begin{itemize}[label=-]
+        \item $T_\text{delay}$: Total system delay time.
+        \item $t_\text{screen}_i$: Display time of instructions on the first screen for each vehicle.
+        \item $t_\text{start}_i$: Time from card scanning at moment $i$.
+    \end{itemize}
+
+\textbf{Objective:} \[T_\text{delay} < 5 \, (\text{s})\]
+    \begin{itemize}
+    \item The system must ensure a delay of less than 5 seconds for user experience.
+    \end{itemize}
+
+    \item \textbf{Video Processing Speed}
+    \begin{itemize}
+        \item Real-time processing with an error margin:
+    \[
+    \Delta t < 0.01 \, (\text{s})
+    \]
+    \end{itemize}
+\end{enumerate}
+
+\subsubsection{Conclusion}
+The intelligent parking system is evaluated based on:
+    \begin{itemize}[label=-]
+        \item Average parking time ($T_\text{new}$) with automated guidance.
+        \item Efficiency improvement rate $\Delta{H}$ exceeding 20%.
+    \item System latency below 5 seconds.
+    \end{itemize}
+
+\subsection{Algorithms}
+\noindent - \textbf{Step 1:}\
+Draw a bounding box for each parking slot in the image frame of the camera responsible for it.\
+Assign an ID to each parking slot.\
+
+\noindent - \textbf{Step 2:}\
+For each road:\
+\tab If the road is adjacent to a row of parking slots:\
+\tab \tab Divide the road into smaller segments so that each segment is adjacent to two parking slots on both sides (if the road has parking slots on both sides; otherwise, each segment is adjacent to only one parking slot).\
+\tab \tab Each segment is responsible for the parking slots adjacent to it.\
+\tab If the road is at an intersection:\
+\tab \tab The section at the junction is assigned as a single segment.\
+\tab If the road is a straight path with no intersections and no adjacent parking slots:\
+\tab \tab This segment is assigned as a single section.\
+\tab If the road is an entrance segment:\
+\tab \tab This segment is assigned as a single section.\
+\tab Draw bounding boxes for each segmented road section within the image frame of the responsible camera.\
+\tab Assign an ID to each segmented road section.\
+\tab Create a dictionary \texttt{responsible\_road\_section}, where the key is the ID of the segmented road section and the value is a list of parking slot IDs that the section is responsible for.\
+
+\noindent - \textbf{Step 3:}\
+Set the entrance section as the coordinate origin (0,0).\
+Define the direction from the entrance to the parking lot as upward.\
+Define \texttt{assign\_coordinates(current, continue)}: (where \texttt{current} is the ID of the current road section and \texttt{continue} is the ID of the adjacent section)\
+\tab Assign coordinates to \texttt{current} as (a, b).\
+\tab If the direction from \texttt{current} to \texttt{continue} is upward:\
+\tab \tab Assign coordinates to \texttt{continue} as (a, b+1).\
+\tab If the direction is turning left:\
+\tab \tab Assign coordinates to \texttt{continue} as (a+1, b).\
+\tab If the direction is turning right:\
+\tab \tab Assign coordinates to \texttt{continue} as (a-1, b).\
+\tab If the direction is downward:\
+\tab \tab Assign coordinates to \texttt{continue} as (a, b-1).\
+\tab For each adjacent section \texttt{continue\_of\_continue} (excluding \texttt{current}):\
+\tab \tab Call \texttt{assign\_coordinates(continue, continue\_of\_continue)}.\
+Assuming the entrance section has ID 1 and its adjacent section has ID 2:\
+\texttt{assign\_coordinates(1, 2)}.\
+
+\noindent - \textbf{Step 4:}\
+Assign IDs to electronic boards.\
+Assign IDs to each camera responsible for monitoring roads.\
+Create a dictionary \texttt{electronic\_board\_positions}, where the key is the electronic board ID, and the value is a list containing:\
+- The coordinate ID of the road section in front of the electronic board.\
+- The coordinate ID of the road section where the electronic board is located.\
+- A list of camera IDs responsible for monitoring the roads facing the board.\
+
+\noindent - \textbf{Step 5:}\
+Consider the segmented road sections as nodes.\
+For each pair of adjacent road sections, create a bidirectional path between their corresponding nodes.\
+
+\noindent - \textbf{Step 6:}\
+If a vehicle scans its card to enter:\
+\tab Use Yolo and EasyOCR to recognize the license plate.\
+\tab Update the license plate in the database.\
+\tab Update the vehicle's current position as the entrance node in the database.\
+\tab Update the ID of the camera that detected the license plate in the database.\
+
+\noindent - \textbf{Step 7:}\
+Use all real-time video frames from all cameras:\
+\tab Apply thresholding to create binary images from cameras monitoring parking slots.\
+\tab \tab For each parking slot in the list:\
+\tab \tab \tab If the number of white pixels < Threshold, the slot is "Empty"; otherwise, it is "Occupied".\
+\tab \tab Update the status of parking slots by ID.\
+\tab \tab If all slots are "Occupied", deny entry to the parking lot.\
+\tab For each key, value in \texttt{responsible\_road\_section.items()}:\
+\tab \tab If at least one parking slot in \texttt{value} is "Empty":\
+\tab \tab \tab Mark the road section as a target node.\
+\tab \tab Else:\
+\tab \tab \tab Mark the road section as a normal node.\
+\tab Use BFS to find the nearest target node from the current node.\
+\tab Select an "Empty" slot within \texttt{responsible\_road\_section[target node]} and mark it as "Wait".\
+\tab Update the path and destination slot ID in the database for the vehicle's license plate.\
+\tab Let \texttt{path} be the list of coordinates along the route.\
+\tab Let \texttt{s} be the ID of the camera detecting the license plate.\
+\tab \texttt{v = path[1] - path[0]}.\
+\tab For each key, value in \texttt{electronic\_board\_positions.items()}:\
+\tab \tab If \texttt{s} is in \texttt{value[2]}:\
+\tab \tab \tab \texttt{u = value[0] - value[1]}.\
+\tab \tab \tab If \texttt{u} and \texttt{v} are in the same direction:\
+\tab \tab \tab \tab Display a U-turn instruction on electronic board \texttt{key}.\
+\tab For \texttt{i} in range \texttt{len(1, path - 1)}:\
+\tab \tab For each key, value in \texttt{electronic\_board\_positions.items()}:\
+\tab \tab \tab If \texttt{value[1] == path[i]} and \texttt{value[0] == path[i-1]}:\
+\tab \tab \tab \tab Compute directional change and display turn instructions.\
+\tab Display signal at the destination slot.\
+
+\noindent - \textbf{Step 8:}\
+For each frame in real-time video:\
+\tab For each license plate in the database:\
+\tab \tab Use Yolo and EasyOCR to find the camera ID and road section ID of the detected plate.\
+\tab \tab If the plate is no longer visible in any camera:\
+\tab \tab \tab Remove it from the database.\
+\tab \tab Else if the road section is not in the planned path or the destination slot is "Occupied":\
+\tab \tab \tab Update the vehicle's current position and detected camera in the database.\
+\tab \tab \tab Repeat Step 7.\
+\tab \tab Else:\
+\tab \tab \tab Continue.
+
+\section{Computational Thinking Application}
+
+\subsection{Decomposition}
+The problem is broken down into the following components and tasks:
+
+\begin{itemize}[label=-]
+    \item \textbf{Detecting vacant parking spots:} \newline
+    Determine the status of each parking spot using images from cameras.
+
+    \item \textbf{License plate recognition:} \newline
+    Identify vehicles by their license plates to associate them with their target parking spots.
+
+    \item \textbf{Finding the shortest path:} \newline
+    Use graph algorithms to optimize the vehicle's route.
+
+    \item \textbf{Updating guidance:}
+    \begin{itemize}
+        \item Display directions on electronic signs at intersections and activate signal lights at destination parking spots to guide vehicles correctly.
+    \end{itemize}
+
+    \item \textbf{Monitoring and updating status:}
+    \begin{itemize}
+        \item Track real-time video feeds to update the current position of vehicles.
+        \item Detect cases where vehicles deviate from the assigned route or when the destination parking spot becomes occupied.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Abstraction}
+
+In this problem, we focus on essential elements and eliminate unnecessary details:
+
+\begin{itemize}[label=-]
+    \item \textbf{Key elements to focus on:}
+    \begin{itemize}
+        \item Parking lot layout (locations of parking spots, pathways, guidance signs, and cameras).
+        \item Real-time video data from cameras monitoring parking spots to determine availability and cameras monitoring pathways to track vehicle positions.
+        \item License plate recognition for vehicle identification.
+        \item Displaying guidance instructions on electronic signs at specific locations.
+    \end{itemize}
+
+    \item \textbf{Details to disregard:}
+    \begin{itemize}
+        \item Vehicle color or design, as they do not impact the solution.
+        \item Irrelevant information from video feeds, such as other objects in the frame.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Pattern Recognition}
+
+Identifying the patterns of the problem is as follows:
+\begin{itemize}[label=-]
+    \item \textbf{Parking Spot Status Recognition:}
+    \begin{itemize}
+        \item Apply the thresholding method on images to determine the number of black/white pixels in each parking spot, thereby identifying the spot's status (vacant or occupied).
+    \end{itemize}
+    \item \textbf{License Plate Recognition:}
+    \begin{itemize}
+        \item Detect license plates in images at the entrance gate.
+        \item Extract characters from the license plate to identify the vehicle.
+    \end{itemize}
+    \item \textbf{Vehicle Location Identification:}
+    \begin{itemize}
+        \item Determine the bounding box of the license plate to locate the vehicle within the parking lanes and identify its current position.
+    \end{itemize}
+    \item \textbf{Shortest Path Finding:}
+    \begin{itemize}
+        \item Use a graph of nodes (corresponding to divided road segments) to determine the optimal path to an available parking spot, with the starting node being the vehicle's current position.
+    \end{itemize}
+    \item \textbf{Guidance Update:}
+    \begin{itemize}
+        \item Display turning commands at intersections via signboards and light signals at the destination spot.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Algorithms}
+
+The main algorithms in the system include:
+\begin{itemize}[label=-]
+    \item \textbf{License Plate Recognition Algorithm:}
+    \begin{itemize}
+        \item \textbf{YOLO (You Only Look Once):} Detect vehicles in the frame.
+        \item \textbf{EasyOCR:} Extract and recognize characters from license plates.
+    \end{itemize}
+    \item \textbf{Parking Spot Status Determination Algorithm:}
+    \begin{itemize}
+        \item Apply the thresholding method to convert images to binary format, determining the spot's status based on the number of white pixels.
+    \end{itemize}
+    \item \textbf{Shortest Path Finding Algorithm:}
+    \begin{itemize}
+        \item \textbf{BFS (Breadth-First Search):} Find the fastest route from the entrance to the target spot.
+        \item Based on a graph of nodes (road segments) connected in the parking lot layout.
+    \end{itemize}
+    \item \textbf{Guidance Update Algorithm:}
+    \begin{itemize}
+        \item Calculate turning directions at each intersection based on the cross product of path vectors.
+        \item Display left turn, right turn, or straight-ahead commands on electronic boards at each guidance sign.
+    \end{itemize}
+    \item \textbf{Error Handling Algorithm:}
+    \begin{itemize}
+        \item Detect vehicles deviating from the planned route or occupied destination spots.
+        \item Recalculate a new path and update guidance accordingly.
+    \end{itemize}
+\end{itemize}
+
+\section{Ethics and Social}
+
+The application of modern technology in parking systems has brought significant advancements but also raises important ethical and social issues, which considerably impact the realization of such initiatives. These issues can be divided into two main aspects:
+
+\subsection{Positive Impacts}
+\begin{itemize}[label=-]
+    \item \textbf{Job Creation:} The design, construction, and maintenance of the system generate new job opportunities, meeting labor demands in the technology sector.
+    \item \textbf{Encouraging Innovation:} Contributes to raising technological awareness, fostering innovation, and supporting national digital transformation while keeping up with modern trends.
+    \item \textbf{Enhancing Operational Efficiency:} Takes over tasks such as vehicle management and security, saving manpower and increasing productivity and operational efficiency.
+    \item \textbf{Ensuring Fairness:} The system ensures no discrimination between vehicle types, whether luxury or standard, promoting transparency and fairness.
+    \item \textbf{Modernizing Management:} Helps create a more modern working environment, reduces congestion, saves time in the parking process, and improves management efficiency.
+\end{itemize}
+
+\subsection{Negative Impacts}
+\begin{itemize}[label=-]
+    \item \textbf{Job Displacement:} Manual labor is replaced by knowledge-based roles. Many unskilled workers may lose jobs due to the inability to meet new technological requirements.
+    \item \textbf{Privacy Risks:} Users may feel monitored as the system collects and stores license plate information. In case of cyberattacks, this sensitive information could be leaked and misused.
+    \item \textbf{Inconsistency Issues:} Ensuring consistency between vehicle entry and exit can be challenging, leading to potential errors in management.
+    \item \textbf{System Dependence:} Users may become overly dependent on the system, and in case of errors, it could lead to wasted time, financial loss, unnecessary disputes, or even loss of trust in the system.
+    \item \textbf{Accessibility Barriers:} Elderly individuals or those less familiar with technology may struggle to adapt to the system’s modern interface.
+    \item \textbf{Reduced Social Interaction:} Decreased direct communication may cause some individuals to feel isolated or unsupported in situations requiring personal attention.
+    \item \textbf{Lack of Empathy:} Unlike human staff, AI-based systems often lack flexibility and empathy, making it difficult to address customers’ specific needs.
+\end{itemize}
+
+\section{Conclusion}
+
+The design and implementation of a smart parking system based on the specified requirements and constraints help optimize space management and usage, enhance guidance and monitoring efficiency, and ensure operational standards. This not only provides a better user experience but also contributes to improving the overall efficiency of parking operations.
+
+Although there are still some limitations in system processing and further solutions are needed for detailed optimization, this approach remains feasible and offers significant benefits when applied in practice.
+
+
+\centering \textbf{THE END} 
+\end{document}
